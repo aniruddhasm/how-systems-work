@@ -12,4 +12,4 @@ const req = http.request(options, (res) => {
     });
 });
 
-req.end();
+req.end(); // This is important to send the request to the server. if you don't call this, the request will not be sent.

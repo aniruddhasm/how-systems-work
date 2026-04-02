@@ -4,6 +4,7 @@ const server = net.createServer((socket) => {
     console.log("Client connected");
 
     socket.on("data", (data) => {
+        console.log("Received buffered data:", data);
         console.log("Received:", data.toString());
         socket.write("Message received by TCP server");
     });

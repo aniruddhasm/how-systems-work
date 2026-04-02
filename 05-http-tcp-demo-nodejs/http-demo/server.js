@@ -14,6 +14,9 @@ const server = http.createServer((req, res) => {
 });
 
 // server.on("connection", (socket) => {
+//     socket.on("data", (data) => {
+//         console.log("Received:", data.toString());
+//     });
 //     console.log("New TCP connection established");
 // });
 
