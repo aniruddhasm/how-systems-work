@@ -3,7 +3,7 @@ const fs = require("fs");
 console.log("start");
 process.nextTick(() => console.log("nextTick before I/O and after end"));
 
-fs.readFile('abc.js', (err, data) => {
+fs.readFile(__filename, (err, data) => {
     if (err) {
         console.log(err);
         return;
