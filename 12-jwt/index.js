@@ -4,14 +4,14 @@ const jwt = require("jsonwebtoken");
 const app = express();
 app.use(express.json());
 
-const SECRET = "mysecretkey";
+const SECRET = "random-secret-key";
 
 // Login route
 app.post("/login", (req, res) => {
-  const { username } = req.body;
-
+  const { username, password } = req.body;
+  // check if username and password are correct from the database
   const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" });
-
+  
   res.json({ token });
 });
 
