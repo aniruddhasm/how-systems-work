@@ -73,7 +73,7 @@ app.get("/protected", (req, res) => {
       const decoded = jwt.verify(token, ACCESS_SECRET);
       res.send(`Welcome ${decoded.username}`);
     } catch (err) {
-      res.status(403).send("Invalid token");
+      res.status(401).send("Invalid token or token expired");
     }
 });
 
