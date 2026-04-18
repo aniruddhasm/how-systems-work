@@ -33,6 +33,10 @@ app.post("/login", (req, res) => {
     secure: false, // true in production (HTTPS)
     sameSite: 'lax', // "strict" in production,
   });
+    // sameSite scenarios:
+    // 'lax'    → frontend & backend on same domain (http://localhost:3000) [current setup]
+    // 'strict' → high security (banking/admin), won't send cookie even on link click from another site
+    // 'none'   → frontend & backend on different domains (app.mysite.com → api.mysite.com), requires secure: true (HTTPS only)
   res.json({ accessToken });
 });
 
