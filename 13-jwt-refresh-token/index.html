@@ -7,8 +7,9 @@
   <h2>JWT + Refresh Token Demo</h2>
 
   <button onclick="login()">Login</button>
-  <button onclick="callProtected()">Call Protected API</button>
-  <button onclick="refreshToken()">Refresh Access Token</button>
+  <button onclick="callNormal()">Download Failed</button>
+  <button onclick="callProtected()">Download subtitles</button>
+  <button onclick="refreshToken()">Refresh Token</button>
 
   <script>
     let accessToken = "";
@@ -28,6 +29,22 @@
 
       console.log("✅ Access Token:", accessToken);
       console.log("👉 Refresh token stored in cookie (check Application tab)");
+    }
+
+    async function callNormal() {      
+     // Attach current access token to request
+     const authOptions = {
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      };
+
+      let res = await fetch("http://localhost:3000/protected", authOptions);
+
+      // If 401, try refreshing the token once
+      if (res.status === 401) {
+        console.warn("⚠️ Got 401. Token expired...");
+      }
     }
 
     async function refreshToken() {
