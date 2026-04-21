@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Storage Demo</title>
+</head>
+<body>
+  <h2>Storage Demo</h2>
+
+  <button onclick="setLocal()">Set LocalStorage</button>
+  <button onclick="getLocal()">Get LocalStorage</button>
+
+  <br><br>
+
+  <button onclick="setSession()">Set SessionStorage</button>
+  <button onclick="getSession()">Get SessionStorage</button>
+
+  <br><br>
+
+  <button onclick="setCookie()">Set Cookie (Server)</button>
+  <button onclick="getCookie()">Get Cookie (Server)</button>
+
+  <script>
+    // LocalStorage
+    function setLocal() {
+      localStorage.setItem("key", "HelloLocalStorage");
+    }
+
+    function getLocal() {
+      console.log("LocalStorage:", localStorage.getItem("key"));
+    }
+
+    // SessionStorage
+    function setSession() {
+      sessionStorage.setItem("key", "HelloSessionStorage");
+    }
+
+    function getSession() {
+      console.log("SessionStorage:", sessionStorage.getItem("key"));
+    }
+
+    // Cookies (via server)
+    async function setCookie() {
+      await fetch("http://localhost:3000/set-cookie");
+    }
+
+    async function getCookie() {
+      const res = await fetch("http://localhost:3000/get-cookie");
+      const data = await res.json();
+      console.log("Cookies:", data);
+    }
+  </script>
+</body>
+</html>
