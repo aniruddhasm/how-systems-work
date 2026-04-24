@@ -1,0 +1,17 @@
+-- create database
+use employees
+
+-- insert 1 document
+db.users.insertOne({ name: "Alice", age: 25, city: "New York" })
+
+-- insert multiple documents
+db.users.insertMany([{ name: "Bob", age: 30 }, { name: "Charlie", city: "Mumbai" }])
+
+-- this is how it is stored in the db
+[
+  { "id": 1, "name": "Bob", "age": 30 },
+  { "id": 2, "name": "Charlie", "city": "Mumbai" }
+]
+
+-- fetch all documents
+db.users.find()

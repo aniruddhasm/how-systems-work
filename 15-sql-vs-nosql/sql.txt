@@ -1,0 +1,24 @@
+CREATE DATABASE employees;
+
+-- create users
+CREATE TABLE app_users (
+    emp_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    department VARCHAR(50),
+    salary NUMERIC(10, 2) CHECK (salary > 0),
+    hire_date DATE DEFAULT CURRENT_DATE
+);
+
+-- insert rows 
+INSERT INTO app_users (first_name, last_name, department, salary, hire_date)
+VALUES 
+    ('Alice', 'Johnson', 'Engineering', 85000.00, '2023-01-15'),
+    ('Bob', 'Smith', 'Marketing', 62000.00, '2022-11-05'),
+    ('Charlie', 'Davis', 'HR', 55000.00, '2023-03-20'),
+    ('Diana', 'Prince', 'Engineering', 95000.00, '2021-08-12'),
+    ('Edward', 'Norton', 'Sales', 72000.00, '2022-05-30');
+
+
+-- fetch all records
+SELECT * FROM app_users;
