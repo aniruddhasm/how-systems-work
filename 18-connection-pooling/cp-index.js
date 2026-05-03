@@ -25,7 +25,7 @@ app.get("/", async (req, res) => {
   const start = Date.now();
   try {
     const client = await pool.connect();
-    await client.query("SELECT pg_sleep(2);");
+    await client.query("SELECT pg_sleep(1);");
     client.release();
     const end = Date.now();
     res.json({
