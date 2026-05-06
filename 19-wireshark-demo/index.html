@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Users</title>
+  <style>
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Users List</h1>
+  <button onclick="fetchUsers()">Load Users</button>
+
+  <table id="usersTable" style="display: none;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function fetchUsers() {
+      const res = await fetch("http://localhost:3000/users");
+      const data = await res.json();
+
+      const table = document.querySelector("#usersTable");
+      table.style.display = "block";
+
+      const tbody = document.querySelector("#usersTable tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(user => {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = user.name;
+
+        const emailCell = document.createElement("td");
+        emailCell.textContent = user.email;
+
+        row.appendChild(nameCell);
+        row.appendChild(emailCell);
+
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
