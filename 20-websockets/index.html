@@ -1,34 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>WebSocket Demo</title>
-</head>
 <body>
+  <h2>WebSocket Demo</h2>
 
-  <h2>WebSocket Chat Demo</h2>
+  <h3 id="clientId">Connecting...</h3>
 
-  <input type="text" id="message" placeholder="Enter message" />
+  <input id="message" placeholder="Enter message" />
   <button onclick="sendMessage()">Send</button>
 
   <ul id="messages"></ul>
 
   <script>
+    let myClientId = null;
+
     const ws = new WebSocket("ws://localhost:3000");
 
     ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === "welcome") {
+        myClientId = data.clientId;
+
+        document.getElementById(
+          "clientId"
+        ).innerText = `You are Client-${myClientId}`;
+
+        console.log(`Connected as Client-${myClientId}`);
+
+        return;
+      }
+
+      console.log(
+        `Message received from ${data.from}: ${data.message}`
+      );
+
       const li = document.createElement("li");
-      li.innerText = event.data;
-      document.getElementById("messages").appendChild(li);
+      li.innerText = `${data.from}: ${data.message}`;
+
+      document
+        .getElementById("messages")
+        .appendChild(li);
     };
 
     function sendMessage() {
       const input = document.getElementById("message");
+
+      console.log(
+        `Client-${myClientId} sending: ${input.value}`
+      );
 
       ws.send(input.value);
 
       input.value = "";
     }
   </script>
-
 </body>
 </html>
