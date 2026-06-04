@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Polling Demo</title>
+</head>
+<body>
+
+<h2>Polling Demo</h2>
+
+<div id="message"></div>
+
+<script>
+  setInterval(async () => {
+    const response = await fetch("/messages");
+    const data = await response.json();
+
+    console.log("Polling Request Sent");
+
+    document.getElementById("message").innerHTML =
+      `${data.message}<br>${data.timestamp}`;
+  }, 1000);
+</script>
+
+</body>
+</html>

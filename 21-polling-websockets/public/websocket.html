@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Demo</title>
+</head>
+<body>
+
+<h2>WebSocket Demo</h2>
+
+<div id="message"></div>
+
+<script>
+  const ws = new WebSocket("ws://localhost:3000");
+
+  ws.onopen = () => {
+    console.log("WebSocket Connected");
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    console.log("Message Received");
+
+    document.getElementById("message").innerHTML =
+      `${data.message}<br>${data.timestamp}`;
+  };
+</script>
+
+</body>
+</html>
