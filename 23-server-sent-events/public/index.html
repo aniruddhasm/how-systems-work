@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SSE ChatGPT Demo</title>
+
+  <style>
+
+    body {
+      font-family: Arial;
+      padding: 30px;
+    }
+
+    textarea {
+
+      width: 600px;
+      height: 200px;
+
+      font-size: 18px;
+
+      padding: 10px;
+    }
+
+    button {
+
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<h2>ChatGPT Streaming Demo (SSE)</h2>
+
+<button onclick="askAI()">
+  Ask AI
+</button>
+
+<br><br>
+
+<textarea id="response"></textarea>
+
+<script>
+
+function askAI() {
+
+  document
+    .getElementById("response")
+    .value = "";
+
+  const eventSource =
+    new EventSource("/stream");
+
+  eventSource.onmessage =
+    (event) => {
+
+      document
+        .getElementById("response")
+        .value +=
+        event.data + " ";
+
+    };
+
+  eventSource.addEventListener(
+    "done",
+    () => {
+
+      eventSource.close();
+
+      console.log(
+        "Streaming Completed"
+      );
+
+    }
+  );
+
+}
+
+</script>
+
+</body>
+</html>
