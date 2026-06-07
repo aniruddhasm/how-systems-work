@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Long Polling Demo</title>
+
+  <style>
+
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .card {
+      width: 350px;
+      margin: auto;
+      padding: 20px;
+
+      border-radius: 10px;
+
+      border: 1px solid #ddd;
+
+      box-shadow:
+      0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .count {
+      font-size: 60px;
+      font-weight: bold;
+      color: #1DA1F2;
+    }
+
+    input {
+
+      width: 300px;
+
+      padding: 10px;
+
+      margin-top: 30px;
+    }
+
+    button {
+
+      padding: 10px 20px;
+
+      margin-top: 15px;
+
+      cursor: pointer;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="title">
+      Total Tweets
+    </div>
+
+    <div
+      id="count"
+      class="count"
+    >
+      0
+    </div>
+
+  </div>
+
+  <br>
+
+  <input
+    id="tweet"
+    placeholder="Enter tweet text"
+  />
+
+  <br>
+
+  <button
+    onclick="createTweet()"
+  >
+    Add Tweet
+  </button>
+
+  <script>
+
+    async function startLongPolling() {
+
+      try {
+
+        const response =
+          await fetch("/messages");
+
+        const data =
+          await response.json();
+
+        document
+          .getElementById("count")
+          .innerText =
+          data.totalMessages;
+
+        console.log(
+          "Updated Count:",
+          data.totalMessages
+        );
+
+      } catch (err) {
+
+        console.error(err);
+
+      }
+
+      startLongPolling();
+    }
+
+    async function createTweet() {
+
+      const text =
+        document.getElementById(
+          "tweet"
+        ).value;
+
+      if (!text) return;
+
+      await fetch(
+        "/send-tweet",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+            "application/json"
+          },
+
+          body: JSON.stringify({
+            text
+          })
+        }
+      );
+
+      document
+        .getElementById("tweet")
+        .value = "";
+    }
+
+    startLongPolling();
+
+  </script>
+
+</body>
+</html>
