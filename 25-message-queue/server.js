@@ -17,7 +17,7 @@ setInterval(() => {
 /*
  * Create Order
  */
-app.post("/order", (req, res) => {
+app.get("/order", (req, res) => {
   const order = {id: Date.now()};
   queue.push(order);
   console.log(`Order ${order.id} added to queue at ${new Date().toISOString()}`);
