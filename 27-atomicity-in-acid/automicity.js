@@ -22,9 +22,7 @@ async function transfer() {
 
     console.log("Money deducted");
 
-    throw new Error(
-      "Server Crashed"
-    );
+    throw new Error("Server Crashed");
 
     await client.query(`
       UPDATE accounts
@@ -35,9 +33,7 @@ async function transfer() {
     await client.query("COMMIT");
   } catch (err) {
     console.log("Error occurred.");
-
-    await client.query("ROLLBACK");
-    
+    await client.query("ROLLBACK");    
     console.log("Rollback Executed");
   }
   await client.end();

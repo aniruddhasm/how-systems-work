@@ -1,7 +1,8 @@
+psql -h localhost -p 5432 -U postgres -d employees
 -- CREATE TABLE
 CREATE TABLE accounts (
     id INT PRIMARY KEY,
-    balance INT
+    balance INT CHECK(balance >= 0)
 );
 
 -- INSERT DATA
