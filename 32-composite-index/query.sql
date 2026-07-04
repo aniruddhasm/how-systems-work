@@ -11,14 +11,11 @@ SELECT
         'Alice','Bob','Charlie','David',
         'Emma','John','Sophia','Michael'
     ])[floor(random()*8+1)],
-
     (ARRAY[
         'Smith','Brown','Johnson',
         'Williams','Jones','Miller'
     ])[floor(random()*6+1)],
-
     'user' || gs || '@gmail.com'
-
 FROM generate_series(1,1000000) gs;
 
 
