@@ -1,0 +1,23 @@
+POST /orders
+{
+  "customer":"Alice",
+  "amount":100,
+  "date":"2023-05-10"
+}
+
+POST /orders
+{
+  "customer":"Charlie",
+  "amount":500,
+  "date":"2025-02-15"
+}
+
+POST /orders
+{
+  "customer":"Charlie",
+  "amount":500,
+  "date":"2025-02-15"
+}
+
+
+GET /orders/2025-02-15
