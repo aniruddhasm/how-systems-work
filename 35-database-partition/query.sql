@@ -29,9 +29,33 @@ VALUES
 ('Bob',200,'2024-08-11'),
 ('Charlie',500,'2025-02-15');
 
+-- Insert 1 million rows into the orders table for testing partition pruning
+INSERT INTO orders (customer_name, amount, order_date)
+SELECT
+    'Customer_' || gs,
+    (random() * 10000)::INT,
+    DATE '2023-01-01' + ((random() * 364)::INT)
+FROM generate_series(1, 1000000) gs;
+
+INSERT INTO orders (customer_name, amount, order_date)
+SELECT
+    'Customer_' || gs,
+    (random() * 10000)::INT,
+    DATE '2024-01-01' + ((random() * 364)::INT)
+FROM generate_series(1, 1000000) gs;
+
+INSERT INTO orders (customer_name, amount, order_date)
+SELECT
+    'Customer_' || gs,
+    (random() * 10000)::INT,
+    DATE '2025-01-01' + ((random() * 364)::INT)
+FROM generate_series(1, 1000000) gs;
+
 -- Verify the correct partitions
-SELECT tableoid::regclass, *
-FROM orders;
+SELECT tableoid::regclass AS partition_name, COUNT(*)
+FROM orders
+GROUP BY tableoid
+ORDER BY partition_name;
 
 -- this will only scan the partition for 2025, not the entire table
 EXPLAIN ANALYZE
