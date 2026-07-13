@@ -1,23 +1,15 @@
-POST /orders
-{
-  "customer":"Alice",
+Insert records
+curl --location 'http://localhost:3000/orders' \
+--header 'Content-Type: application/json' \
+--data '{
+  "customer":"john",
   "amount":100,
-  "date":"2023-05-10"
-}
-
-POST /orders
-{
-  "customer":"Charlie",
-  "amount":500,
-  "date":"2025-02-15"
-}
-
-POST /orders
-{
-  "customer":"Charlie",
-  "amount":500,
-  "date":"2025-02-15"
-}
+  "date":"2025-05-10"
+}'
 
 
-GET /orders/2025-02-15
+GET Records by date
+curl --location 'http://localhost:3000/orders/2025-02-15'
+
+GET explain the scan 
+curl --location 'http://localhost:3000/orders/explain/2025-02-15'
