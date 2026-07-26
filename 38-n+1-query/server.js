@@ -1,14 +1,7 @@
 const express = require("express");
-const { Pool } = require("pg");
+const pool = require("../db");
 
 const app = express();
-
-const pool = new Pool({
-  user: "postgres",
-  password: "postgres",
-  database: "employees",
-  host: "localhost",
-});
 
 app.get("/users", async (req, res) => {
   console.log("\nQuery #1");
@@ -17,12 +10,10 @@ app.get("/users", async (req, res) => {
   const result = [];
   for (const user of users.rows) {
     console.log(`Fetching orders for User ${user.id}`);
-    const orders = await pool.query(
-      `
+    const orders = await pool.query(`
       SELECT *
       FROM orders
-      WHERE user_id=$1
-      `,
+      WHERE user_id=$1`,
       [user.id]
     );
 

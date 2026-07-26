@@ -1,14 +1,7 @@
 const express = require("express");
-const { Pool } = require("pg");
+const pool = require("../db");
 
 const app = express();
-
-const pool = new Pool({
-  user: "postgres",
-  password: "postgres",
-  database: "employees",
-  host: "localhost",
-});
 
 app.get("/users/:id", async (req, res) => {
     const { id } = req.params;

@@ -1,28 +1,19 @@
 const express = require("express");
-const { Pool } = require("pg");
+const pool = require("../db");
 
 const app = express();
-
-const pool = new Pool({
-  user: "postgres",
-  password: "postgres",
-  database: "employees",
-  host: "localhost",
-});
 
 app.get("/offset", async (req, res) => {
     console.time("Offset Pagination");
   const page = Number(req.query.page);
   const limit = 20;
   const offset = (page - 1) * limit;
-  const result = await pool.query(
-    `
+  const result = await pool.query(`
     SELECT *
     FROM users
     ORDER BY id
     LIMIT $1
-    OFFSET $2
-    `,
+    OFFSET $2`,
     [limit, offset]
   );
   console.timeEnd("Offset Pagination");
