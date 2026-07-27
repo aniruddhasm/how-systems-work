@@ -8,7 +8,7 @@ app.use(express.json());
 app.delete("/users/:id", async (req, res) => {
     await pool.query(`
         UPDATE users
-        SET deleted = TRUE
+        SET deleted_at = NOW()
         WHERE id = $1`,
         [req.params.id]
     );
@@ -19,7 +19,7 @@ app.get("/users", async (req, res) => {
     const result = await pool.query(`
         SELECT *
         FROM users
-        WHERE deleted = FALSE`
+        WHERE deleted_at IS NULL`
     );
     res.json(result.rows);
 });
@@ -27,7 +27,7 @@ app.get("/users", async (req, res) => {
 app.put("/users/:id/restore", async (req, res) => {
     await pool.query(`
         UPDATE users
-        SET deleted = FALSE
+        SET deleted_at = NULL
         WHERE id = $1`,
         [req.params.id]
     );
