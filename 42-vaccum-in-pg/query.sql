@@ -14,7 +14,7 @@ FROM generate_series(1,100000) gs;
 SELECT pg_size_pretty(pg_relation_size('users')) AS size_before_vacuum;
 
 -- Delete half of the users
-DELETE FROM users WHERE id >= 100;
+DELETE FROM users WHERE id >= 50000;
 
 -- Table size after delete
 SELECT pg_size_pretty(pg_relation_size('users')) AS size_after_delete;
@@ -43,4 +43,4 @@ SELECT pg_size_pretty(pg_relation_size('users')) AS size_after_vacuum;
 INSERT INTO users(name)
 SELECT
 'New User'
-FROM generate_series(1,100);
+FROM generate_series(1,50000) gs;
