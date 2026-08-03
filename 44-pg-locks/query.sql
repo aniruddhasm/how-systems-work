@@ -8,7 +8,7 @@ INSERT INTO accounts(name, balance) VALUES
 ('Alice',1000);
 
 
----- Transaction 1
+-- Transaction 1
 BEGIN;
 SELECT *
 FROM accounts

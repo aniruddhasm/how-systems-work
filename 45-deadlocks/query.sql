@@ -28,3 +28,5 @@ WHERE id = 2;
 UPDATE accounts
 SET balance = balance + 100
 WHERE id = 1;
+
+SHOW deadlock_timeout;
