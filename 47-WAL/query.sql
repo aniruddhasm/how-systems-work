@@ -6,8 +6,7 @@ CREATE TABLE accounts (
     balance INT
 );
 
-INSERT INTO accounts(name, balance)
-VALUES ('Alice', 1000);
+INSERT INTO accounts(name, balance) VALUES ('Alice', 1000);
 
 
 -- Check current WAL position
@@ -15,7 +14,6 @@ SELECT pg_current_wal_lsn(); -- 0/3D68750
 
 -- start a transaction
 BEGIN;
-
 UPDATE accounts
 SET balance = 900
 WHERE id = 1;
