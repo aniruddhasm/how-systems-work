@@ -6,8 +6,8 @@ CREATE TABLE students (
 
 INSERT INTO students(name, phone_numbers)
 VALUES
-('Anil', '9876543210,8765432109'),
-('Rahul', '8765432109');
+('Aniruddha', '9876543210,8765432109'),
+('John', '7654321098');
 
 SELECT * FROM students;
 
@@ -21,11 +21,17 @@ CREATE TABLE student_phones (
     phone TEXT
 );
 
+INSERT INTO students_nf(name)
+VALUES
+('Aniruddha'),
+('John');
+
+
 INSERT INTO student_phones(student_id, phone)
 VALUES
 (1, '9876543210'),
 (1, '8765432109'),
-(2, '8765432109');
+(2, '7654321098');
 
 
 SELECT * FROM student_phones;
