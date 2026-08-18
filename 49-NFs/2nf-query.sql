@@ -29,7 +29,7 @@ CREATE TABLE courses (
     course TEXT
 );
 
-CREATE TABLE enrollments (
+CREATE TABLE enrollments_nf (
     student_id INT REFERENCES students(student_id),
     course_id INT REFERENCES courses(course_id),
     PRIMARY KEY (student_id, course_id)
@@ -45,7 +45,7 @@ VALUES
 (101, 'Database'),
 (102, 'Java');
 
-INSERT INTO enrollments
+INSERT INTO enrollments_nf
 VALUES
 (1, 101),
 (1, 102),
@@ -57,7 +57,7 @@ SELECT
     c.course_id,
     s.student_name,
     c.course
-FROM enrollments e
+FROM enrollments_nf e
 JOIN students s
     ON s.student_id = e.student_id
 JOIN courses c
