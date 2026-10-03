@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ticket Booking Demo</title>
+
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+
+        .user-info {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+
+        input {
+            padding: 10px;
+            width: 200px;
+            font-size: 16px;
+        }
+
+
+        .seats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+
+        .seat {
+            width: 80px;
+            height: 70px;
+
+            border: 2px solid #333;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            text-align: center;
+        }
+
+
+        .available {
+            background: #d4edda;
+        }
+
+
+        .held {
+            background: #fff3cd;
+            color: #856404;
+            cursor: not-allowed;
+        }
+
+
+        .booked {
+            background: #f8d7da;
+            color: #721c24;
+            cursor: not-allowed;
+        }
+
+
+        .selected {
+            background: #cce5ff;
+            border: 3px solid #333;
+        }
+
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+
+        .payment-box {
+            margin-top: 25px;
+            padding: 20px;
+
+            border: 2px solid #333;
+            border-radius: 8px;
+
+            display: none;
+        }
+
+
+        .payment-box h2 {
+            margin-top: 0;
+        }
+
+
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+
+        #message {
+            margin-top: 25px;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>🎟️ Ticket Booking Demo</h1>
+
+
+    <div class="user-info">
+
+        <strong>User ID:</strong>
+
+        <span id="userId"></span>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Select Seat
+        </label>
+
+        <div id="seats" class="seats"></div>
+
+    </div>
+
+
+    <button onclick="bookSeat()">
+        Book Seat
+    </button>
+
+
+    <!-- Payment section -->
+
+    <div id="paymentBox" class="payment-box">
+
+        <h2>💳 Payment</h2>
+
+        <p>
+            Your seat is temporarily held.
+        </p>
+
+        <div id="timer">
+            Time remaining: 30 seconds
+        </div>
+
+
+        <button onclick="confirmPayment()">
+            Confirm Payment
+        </button>
+
+
+        <button onclick="cancelPayment()">
+            Cancel Payment
+        </button>
+
+    </div>
+
+
+    <div id="message"></div>
+
+
+    <script>
+
+
+        const eventId = 1;
+
+
+        // Generate a random user for each browser tab
+        const userId =
+            Math.floor(Math.random() * 9000) + 1000;
+
+
+        document.getElementById("userId").innerText =
+            userId;
+
+
+        let selectedSeatId = null;
+
+        let heldSeatId = null;
+
+        let countdownInterval = null;
+
+        let remainingSeconds = 30;
+
+
+        // =================================================
+        // LOAD SEATS
+        // =================================================
+
+        async function loadSeats() {
+
+            try {
+
+                const response = await fetch(
+                    `/api/seats/${eventId}`
+                );
+
+
+                const seats = await response.json();
+
+
+                const seatsContainer =
+                    document.getElementById("seats");
+
+
+                seatsContainer.innerHTML = "";
+
+
+                seats.forEach(seat => {
+
+
+                    const seatElement =
+                        document.createElement("div");
+
+
+                    seatElement.classList.add("seat");
+
+
+                    // ---------------------------------------
+                    // AVAILABLE
+                    // ---------------------------------------
+
+                    if (seat.status === "AVAILABLE") {
+
+                        seatElement.classList.add(
+                            "available"
+                        );
+
+
+                        seatElement.innerText =
+                            seat.seat_number;
+
+
+                        seatElement.onclick = () => {
+
+                            selectSeat(
+                                seat.id,
+                                seatElement
+                            );
+
+                        };
+
+                    }
+
+
+                    // ---------------------------------------
+                    // HELD
+                    // ---------------------------------------
+
+                    else if (seat.status === "HELD") {
+
+                        seatElement.classList.add(
+                            "held"
+                        );
+
+
+                        seatElement.innerHTML =
+                            `${seat.seat_number}<br>Held`;
+
+                    }
+
+
+                    // ---------------------------------------
+                    // BOOKED
+                    // ---------------------------------------
+
+                    else if (seat.status === "BOOKED") {
+
+                        seatElement.classList.add(
+                            "booked"
+                        );
+
+
+                        seatElement.innerHTML =
+                            `${seat.seat_number}<br>Booked`;
+
+                    }
+
+
+                    seatsContainer.appendChild(
+                        seatElement
+                    );
+
+                });
+
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // =================================================
+        // SELECT SEAT
+        // =================================================
+
+        function selectSeat(seatId, element) {
+
+            selectedSeatId = seatId;
+
+
+            document
+                .querySelectorAll(".seat")
+                .forEach(seat => {
+
+                    seat.classList.remove(
+                        "selected"
+                    );
+
+                });
+
+
+            element.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        // =================================================
+        // BOOK / HOLD SEAT
+        // =================================================
+
+        async function bookSeat() {
+
+
+            const message =
+                document.getElementById("message");
+
+
+            if (!selectedSeatId) {
+
+                message.innerText =
+                    "Please select a seat";
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const response = await fetch(
+                    "/api/book",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            userId: userId,
+
+                            eventId: eventId,
+
+                            seatId: selectedSeatId
+
+                        })
+
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    message.innerText =
+                        `❌ ${result.message}`;
+
+                    await loadSeats();
+
+                    return;
+
+                }
+
+
+                // Save held seat
+                heldSeatId = result.seatId;
+
+
+                message.innerText =
+                    `⏳ ${result.message}`;
+
+
+                // Show payment box
+                document
+                    .getElementById("paymentBox")
+                    .style.display = "block";
+
+
+                // Start countdown
+                startCountdown();
+
+
+                // Refresh seats
+                await loadSeats();
+
+
+                selectedSeatId = null;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.innerText =
+                    "Something went wrong";
+
+            }
+
+        }
+
+
+        // =================================================
+        // COUNTDOWN
+        // =================================================
+
+        function startCountdown() {
+
+
+            clearInterval(
+                countdownInterval
+            );
+
+
+            remainingSeconds = 30;
+
+
+            updateTimer();
+
+
+            countdownInterval =
+                setInterval(async () => {
+
+
+                    remainingSeconds--;
+
+
+                    updateTimer();
+
+
+                    if (remainingSeconds <= 0) {
+
+                        clearInterval(
+                            countdownInterval
+                        );
+
+
+                        heldSeatId = null;
+
+
+                        document
+                            .getElementById("paymentBox")
+                            .style.display = "none";
+
+
+                        document
+                            .getElementById("message")
+                            .innerText =
+                            "⏰ Payment time expired. Seat is available again.";
+
+
+                        await loadSeats();
+
+                    }
+
+
+                }, 1000);
+
+        }
+
+
+        function updateTimer() {
+
+            document
+                .getElementById("timer")
+                .innerText =
+                `Time remaining: ${remainingSeconds} seconds`;
+
+        }
+
+
+        // =================================================
+        // CONFIRM PAYMENT
+        // HELD → BOOKED
+        // =================================================
+
+        async function confirmPayment() {
+
+
+            if (!heldSeatId) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const response = await fetch(
+                    "/api/payment-success",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            userId: userId,
+
+                            seatId: heldSeatId
+
+                        })
+
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                if (response.ok) {
+
+
+                    clearInterval(
+                        countdownInterval
+                    );
+
+
+                    document
+                        .getElementById("paymentBox")
+                        .style.display = "none";
+
+
+                    document
+                        .getElementById("message")
+                        .innerText =
+                        `✅ ${result.message}`;
+
+
+                    heldSeatId = null;
+
+
+                    await loadSeats();
+
+                } else {
+
+
+                    document
+                        .getElementById("message")
+                        .innerText =
+                        `❌ ${result.message}`;
+
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                document
+                    .getElementById("message")
+                    .innerText =
+                    "Payment failed";
+
+            }
+
+        }
+
+
+        // =================================================
+        // CANCEL PAYMENT
+        // HELD → AVAILABLE
+        // =================================================
+
+        async function cancelPayment() {
+
+
+            if (!heldSeatId) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const response = await fetch(
+                    "/api/cancel",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            userId: userId,
+
+                            seatId: heldSeatId
+
+                        })
+
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                if (response.ok) {
+
+
+                    clearInterval(
+                        countdownInterval
+                    );
+
+
+                    document
+                        .getElementById("paymentBox")
+                        .style.display = "none";
+
+
+                    document
+                        .getElementById("message")
+                        .innerText =
+                        `↩️ ${result.message}`;
+
+
+                    heldSeatId = null;
+
+
+                    await loadSeats();
+
+                } else {
+
+
+                    document
+                        .getElementById("message")
+                        .innerText =
+                        `❌ ${result.message}`;
+
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                document
+                    .getElementById("message")
+                    .innerText =
+                    "Unable to cancel";
+
+            }
+
+        }
+
+
+        // =================================================
+        // AUTO REFRESH
+        // =================================================
+
+        // setInterval(() => {
+
+        //     loadSeats();
+
+        // }, 2000);
+
+
+        // Initial load
+        loadSeats();
+
+
+    </script>
+
+
+</body>
+
+</html>
