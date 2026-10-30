@@ -1,6 +1,7 @@
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+const MAX_RETRIES = 5;
 
 let apiAttempts = 0;
 
@@ -9,14 +10,14 @@ async function callApi() {
   console.log(`Calling API (attempt ${apiAttempts})...`);
 
   // Simulate temporary failures
-  if (apiAttempts < 10) {
+  if (apiAttempts < MAX_RETRIES) {
     throw new Error("Temporary failure");
   }
 
   return { status: "success" };
 }
 
-async function retryWithBackoff(maxRetries = 10) {
+async function retryWithBackoff(maxRetries = MAX_RETRIES) {
   for (let attempt = 0; ; attempt++) {
     try {
       const result = await callApi();
@@ -30,8 +31,8 @@ async function retryWithBackoff(maxRetries = 10) {
 
       const baseDelay = 1000 * 2 ** attempt;
       const jitter = Math.random() * baseDelay;
-      const delay = baseDelay;
-      //const delay = baseDelay + jitter; // Uncomment this line to add jitter to the delay
+      //const delay = baseDelay;
+      const delay = baseDelay + jitter; // Uncomment this line to add jitter to the delay
 
       console.log(
         `Retrying in ${(delay / 1000).toFixed(2)} seconds...`
