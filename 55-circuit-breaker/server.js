@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const PORT = 3000;
 
-const FAILURE_THRESHOLD = 3;
+const FAILURE_THRESHOLD = 2;
 const RESET_TIMEOUT = 5000;
 
 let state = "CLOSED";
@@ -18,11 +18,11 @@ async function callDownstream() {
   downstreamAttempts++;
   console.log(`Calling downstream (attempt ${downstreamAttempts})`);
 
-  if (downstreamAttempts <= 3) {
+  if (downstreamAttempts <= 2) {
     throw new Error("Downstream service unavailable");
   }
 
-  return { message: "Downstream service is healthy" };
+  return { message: "Downstream service is healthy", state };
 }
 
 class CircuitOpenError extends Error {}
